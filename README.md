@@ -9,8 +9,8 @@ This is a language translation tool built using Flask and OpenAI's GPT-4 model. 
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/tr-haider/openai-language-translation-tool.git
-   cd openai-language-translation-tool
+   git clone https://github.com/inoor18/Document-Verification-using-openAI.git
+   cd Document-Verification-using-openAI
 
    ```
 
