@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Verification Result</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1,
+    h2 {
+      color: #333;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #fff;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    a:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Verification Result</h1>
+  <p>{{ result.message }}</p>
+
+  {% if result.result %}
+  {% if result.correct %}
+  <h2>Information is Correct</h2>
+  {% endif %}
+
+  {% if result.incorrect %}
+  <h2>Corrected Information</h2>
+  <ul>
+    {% for item in result.result %}
+    <li>{{ item.text }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% endif %}
+
+  <a href="{{ url_for('index') }}">Upload another document</a>
+</body>
+
+</html>

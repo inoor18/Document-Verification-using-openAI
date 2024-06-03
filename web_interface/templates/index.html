@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Document Verification</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1,
+    h2 {
+      color: #333;
+    }
+
+    input.btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      border-width: 0px;
+    }
+
+    input::file-selector-button {
+      display: inline-block;
+      border-width: 0px;
+      margin-top: 20px;
+      padding: 10px 15px;
+      text-decoration: none;
+      border-radius: 4px;
+      background-color:#37B6FF;
+    }
+
+    input.btn:hover,
+    input::file-selector-button:hover {
+      background-color: #0056b3;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Upload a Document for Verification</h1>
+  <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" />
+    <input type="submit" value="Upload" class="btn" />
+  </form>
+</body>
+
+</html>
