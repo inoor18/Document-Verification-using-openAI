@@ -58,7 +58,7 @@
   <h2>Corrected Information</h2>
   <ul>
     {% for item in result.result %}
-    <li>{{ item.text }}</li>
+    <li>{{ item.text | bold | safe }}</li>
     {% endfor %}
   </ul>
   {% endif %}

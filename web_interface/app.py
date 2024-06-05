@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for
 from dotenv import load_dotenv
 from openai import OpenAI
 import os
+import re 
 
 load_dotenv()
 
@@ -10,11 +11,15 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
 
+def convert_to_bold(text):
+    # Use a regular expression to find text enclosed in double asterisks and replace it with HTML bold tags
+    return re.sub(r'\*\*(.*?)\*\*', r'<strong style="color: red;">\1</strong>', text)
+
+app.jinja_env.filters['bold'] = convert_to_bold
 
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
@@ -44,11 +49,14 @@ def verify_document(content):
         messages=[
             {
                 "role": "user",
-                "content": f"Check if the following content is fully correct. If it is entirely positive correct, answer 'The information is correct.'. Otherwise, overwrite the corrected information instead the false information about content and do not add additional content:\n\n{content}",
+                "content": f"Check if the following content is fully correct. If it is entirely positive correct, answer 'The information is correct.'. Otherwise, give two texts , first text show 'Original:' with the given original text with the each incorrect information highlighted by **text** and second text shows 'Corrected:' the corrected information overwritten instead the incorrect information and no ** in second corrected text and do not add additional content:\n\n{content}",
             }
         ],
     )
     response_text = response.choices[0].message.content.strip()
+
+    print(response_text)
+
     if "The information is correct." in response_text:
         return {
             "correct": "true",
@@ -62,7 +70,6 @@ def verify_document(content):
             "message": "The information in the uploaded document is not entirely correct. Information has been corrected.",
             "result": [{"text": info} for info in corrected_info if info.strip()],
         }
-
 
 if __name__ == "__main__":
     app.run(debug=True)
