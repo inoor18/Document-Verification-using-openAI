@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for
 from dotenv import load_dotenv
 from openai import OpenAI
 import os
-import re 
+import re
 
 load_dotenv()
 
@@ -10,16 +10,22 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
+ORIGINAL_TEXT = "Original:"
+CORRECTED_TEXT = "Corrected:"
+
 
 def convert_to_bold(text):
     # Use a regular expression to find text enclosed in double asterisks and replace it with HTML bold tags
-    return re.sub(r'\*\*(.*?)\*\*', r'<strong style="color: red;">\1</strong>', text)
+    return re.sub(r"\*\*(.*?)\*\*", r'<strong style="color: red;">\1</strong>', text)
 
-app.jinja_env.filters['bold'] = convert_to_bold
+
+app.jinja_env.filters["bold"] = convert_to_bold
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
@@ -49,7 +55,7 @@ def verify_document(content):
         messages=[
             {
                 "role": "user",
-                "content": f"Check if the following content is fully correct. If it is entirely positive correct, answer 'The information is correct.'. Otherwise, give two texts , first text show 'Original:' with the given original text with the each incorrect information highlighted by **text** and second text shows 'Corrected:' the corrected information overwritten instead the incorrect information and no ** in second corrected text and do not add additional content:\n\n{content}",
+                "content": f"Check if the following content is fully correct. If it is entirely positive and correct, answer 'The information is correct.'. Otherwise, give two texts, The first text shows 'Original:' with the given original text with each incorrect information highlighted by **text** and the second text shows 'Corrected:' the corrected information overwritten instead of the incorrect information and no ** in second corrected text and do not add additional content:\n\n{content}",
             }
         ],
     )
@@ -59,17 +65,34 @@ def verify_document(content):
 
     if "The information is correct." in response_text:
         return {
-            "correct": "true",
+            "correct": True,
             "message": "The information in the uploaded document is correct.",
             "result": response_text,
         }
-    else:
-        corrected_info = response_text.split("\n")
+    elif ORIGINAL_TEXT in response_text and CORRECTED_TEXT in response_text:
+        original_text = ""
+        corrected_text = ""
+        if response_text.startswith(ORIGINAL_TEXT):
+            original_text = (
+                response_text.split(ORIGINAL_TEXT)[1].split(CORRECTED_TEXT)[0].strip()
+            )
+            corrected_text = response_text.split(CORRECTED_TEXT)[1].strip()
+        else:
+            original_text = (
+                response_text.split(CORRECTED_TEXT)[1].split(ORIGINAL_TEXT)[0].strip()
+            )
+            corrected_text = response_text.split(ORIGINAL_TEXT)[1].strip()
         return {
-            "incorrect": "true",
+            "incorrect": True,
             "message": "The information in the uploaded document is not entirely correct. Information has been corrected.",
-            "result": [{"text": info} for info in corrected_info if info.strip()],
+            "result": {"original": original_text, "corrected": corrected_text},
         }
+    else:
+        return {
+            "notFound": True,
+            "message": "Didn't find relevant information",
+        }
+
 
 if __name__ == "__main__":
     app.run(debug=True)

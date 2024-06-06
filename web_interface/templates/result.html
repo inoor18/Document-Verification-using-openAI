@@ -2,44 +2,76 @@
 <html lang="en">
 
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verification Result</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
-      background-color: #f4f4f4;
+      background-color: #121212;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: calc(100vw - 40px);
+      height: calc(100vh - 40px);
     }
 
-    h1,
+    h1 {
+      color: #ffffff;
+    }
+
     h2 {
-      color: #333;
+      color: #e0e0e0;
+      margin: 10px auto;
+    }
+
+    strong {
+      color: #e0e0e0;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.5;
+      margin-bottom: 20px;
     }
 
     ul {
       list-style-type: none;
-      padding: 0;
+      padding-left: 0;
+      margin-top: 0;
     }
 
     li {
-      background: #fff;
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      margin-bottom: 25px;
     }
 
-    a {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 15px;
-      background-color: #007BFF;
-      color: #fff;
+    li>p {
+      margin-bottom: 10px;
+      background-color: #333333;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: calc(100vw - 100px);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .btn {
+      margin-top: 50px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 25px;
       text-decoration: none;
-      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
     }
 
-    a:hover {
+    .btn:hover {
       background-color: #0056b3;
     }
   </style>
@@ -50,22 +82,31 @@
   <p>{{ result.message }}</p>
 
   {% if result.result %}
+  <!---\/\/\/\/\/-->
+  <!--- Information already correct  -->
   {% if result.correct %}
   <h2>Information is Correct</h2>
   {% endif %}
-
+  <!--- Information not found  -->
+  {% if result.notFound %}
+  <h2>Didn't find relevant information</h2>
+  {% endif %}
+  <!--- Information is incorrect   -->
   {% if result.incorrect %}
-  <h2>Corrected Information</h2>
   <ul>
-    {% for item in result.result %}
-    <li>{{ item.text | bold | safe }}</li>
-    {% endfor %}
+    <li><strong>Original:</strong>
+      <p>{{ result.result.original | bold | safe }}</p>
+    </li>
+    <li><strong>Corrected:</strong>
+      <p>{{ result.result.corrected | safe }}</p>
+    </li>
   </ul>
   {% endif %}
-
+  <!---/\/\/\/\/\-->
   {% endif %}
 
-  <a href="{{ url_for('index') }}">Upload another document</a>
+  <a href="{{ url_for('index') }}" class="btn">Upload another document</a>
+
 </body>
 
 </html>
