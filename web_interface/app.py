@@ -55,7 +55,7 @@ def verify_document(content):
         messages=[
             {
                 "role": "user",
-                "content": f"Check if the following content is fully correct. If it is entirely positive and correct, answer 'The information is correct.'. Otherwise, give two texts, The first text shows 'Original:' with the given original text with each incorrect information highlighted by **text** and the second text shows 'Corrected:' the corrected information overwritten instead of the incorrect information and no ** in second corrected text and do not add additional content:\n\n{content}",
+                "content": f"Check if the following content is fully correct. If it is entirely positive and correct, answer 'The information is correct.'. Otherwise, give two texts, The first text shows 'Original:' with the given original text with each incorrect information highlighted by **text** and the second text shows 'Corrected:' the corrected information overwritten instead of the incorrect information and importantly no ** in second corrected text and do not add additional content and keep the spaces between paragraph as it is:\n\n{content}",
             }
         ],
     )
@@ -73,15 +73,17 @@ def verify_document(content):
         original_text = ""
         corrected_text = ""
         if response_text.startswith(ORIGINAL_TEXT):
-            original_text = (
-                response_text.split(ORIGINAL_TEXT)[1].split(CORRECTED_TEXT)[0].strip()
-            )
-            corrected_text = response_text.split(CORRECTED_TEXT)[1].strip()
+            # Splitting the text once at "Original:" and "Corrected:"
+            parts = response_text.split(ORIGINAL_TEXT, 1)[1]
+            original_text = parts.split(CORRECTED_TEXT, 1)[0].strip()
+            corrected_text = parts.split(CORRECTED_TEXT, 1)[1].strip()
         else:
-            original_text = (
-                response_text.split(CORRECTED_TEXT)[1].split(ORIGINAL_TEXT)[0].strip()
-            )
-            corrected_text = response_text.split(ORIGINAL_TEXT)[1].strip()
+            # Splitting the text once at "Corrected:" and "Original:"
+            parts = response_text.split(CORRECTED_TEXT, 1)[1]
+            corrected_text = parts.split(ORIGINAL_TEXT, 1)[0].strip()
+            original_text = parts.split(ORIGINAL_TEXT, 1)[1].strip()
+
+        print({original_text,corrected_text})
         return {
             "incorrect": True,
             "message": "The information in the uploaded document is not entirely correct. Information has been corrected.",

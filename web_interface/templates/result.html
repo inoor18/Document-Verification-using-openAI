@@ -7,10 +7,10 @@
   <title>Verification Result</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Source Sans Pro", sans-serif;
       margin: 0;
       padding: 20px;
-      background-color: #121212;
+      background-color: rgb(14, 17, 23);
       color: #e0e0e0;
       display: flex;
       flex-direction: column;
@@ -19,8 +19,16 @@
       height: calc(100vh - 40px);
     }
 
+    div {
+      max-width: 1000px;
+    }
+
     h1 {
+      line-height: 1.2;
+      font-size: 2.75rem;
+      font-weight: 700;
       color: #ffffff;
+      text-align: center;
     }
 
     h2 {
@@ -32,16 +40,11 @@
       color: #e0e0e0;
     }
 
-    p {
-      font-size: 18px;
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
     ul {
       list-style-type: none;
       padding-left: 0;
       margin-top: 0;
+      margin-bottom: 40px;
     }
 
     li {
@@ -49,17 +52,19 @@
     }
 
     li>p {
+      font-size: 18px;
       margin-bottom: 10px;
       background-color: #333333;
       padding: 20px;
       border-radius: 10px;
-      max-width: calc(100vw - 100px);
       width: 100%;
       box-sizing: border-box;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-width: 100%;
     }
 
     .btn {
-      margin-top: 50px;
       padding: 10px 20px;
       background-color: #007bff;
       color: white;
@@ -78,35 +83,36 @@
 </head>
 
 <body>
-  <h1>Verification Result</h1>
-  <p>{{ result.message }}</p>
+  <div>
+    <h1>Verification Result</h1>
+    <p>{{ result.message }}</p>
 
-  {% if result.result %}
-  <!---\/\/\/\/\/-->
-  <!--- Information already correct  -->
-  {% if result.correct %}
-  <h2>Information is Correct</h2>
-  {% endif %}
-  <!--- Information not found  -->
-  {% if result.notFound %}
-  <h2>Didn't find relevant information</h2>
-  {% endif %}
-  <!--- Information is incorrect   -->
-  {% if result.incorrect %}
-  <ul>
-    <li><strong>Original:</strong>
-      <p>{{ result.result.original | bold | safe }}</p>
-    </li>
-    <li><strong>Corrected:</strong>
-      <p>{{ result.result.corrected | safe }}</p>
-    </li>
-  </ul>
-  {% endif %}
-  <!---/\/\/\/\/\-->
-  {% endif %}
+    {% if result.result %}
+    <!---\/\/\/\/\/-->
+    <!--- Information already correct  -->
+    {% if result.correct %}
+    <h2>Information is Correct</h2>
+    {% endif %}
+    <!--- Information not found  -->
+    {% if result.notFound %}
+    <h2>Didn't find relevant information</h2>
+    {% endif %}
+    <!--- Information is incorrect   -->
+    {% if result.incorrect %}
+    <ul>
+      <li><strong>Original:</strong>
+        <p>{{ result.result.original | bold | safe }}</p>
+      </li>
+      <li><strong>Corrected:</strong>
+        <p>{{ result.result.corrected | safe }}</p>
+      </li>
+    </ul>
+    {% endif %}
+    <!---/\/\/\/\/\-->
+    {% endif %}
 
-  <a href="{{ url_for('index') }}" class="btn">Upload another document</a>
-
+    <a href="{{ url_for('index') }}" class="btn">Upload another document</a>
+  </div>
 </body>
 
 </html>
